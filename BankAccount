@@ -1,0 +1,161 @@
+using System;
+
+public class BankAccount
+{
+    private string name;
+    private string accountNumber;
+    private string pin;
+    private decimal balance = 0;
+    private decimal totalDeposits = 0;
+    private decimal totalWithdrawals = 0;
+
+    // account creation
+    public void CreateAccount(string userName, string accNumber, string userPin)
+    {
+        name = userName;
+        accountNumber = accNumber;
+        pin = userPin;
+        Console.WriteLine("Account created for " + name + " with Account Number: " + accountNumber);
+    }
+
+    // Verify
+    public bool VerifyPin(string inputPin)
+    {
+        return inputPin == pin;
+    }
+
+    // Deposit funds
+    public void Deposit(decimal amount)
+    {
+        if (amount <= 0)
+        {
+            Console.WriteLine("You cannot deposit a negative amount.");
+        }
+        else
+        {
+            balance += amount;
+            totalDeposits += amount;
+            Console.WriteLine("Deposited: " + amount);
+        }
+    }
+
+    // Withdraw funds
+    public void Withdraw(decimal amount)
+    {
+        if (amount > balance)
+        {
+            Console.WriteLine("You cannot withdraw more than your current balance.");
+        }
+        else
+        {
+            balance -= amount;
+            totalWithdrawals += amount;
+            Console.WriteLine("Withdrew: " + amount);
+        }
+    }
+
+    // Check account balance
+    public void CheckBalance()
+    {
+        Console.WriteLine("Current Balance: " + balance);
+    }
+
+    // Return balance, deposits, and withdrawals in an array
+    public decimal[] GetSummaryArray()
+    {
+        return new decimal[] { balance, totalDeposits, totalWithdrawals };
+    }
+
+    // Return full account statement
+    public void ShowStatement()
+    {
+        Console.WriteLine("Account Statement");
+        Console.WriteLine("Name: " + name);
+        Console.WriteLine("Account Number: " + accountNumber);
+        Console.WriteLine("Balance: " + balance);
+        Console.WriteLine("Total Deposits: " + totalDeposits);
+        Console.WriteLine("Total Withdrawals: " + totalWithdrawals);
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        BankAccount account = new BankAccount();
+
+        Console.Write("Enter your name: ");
+        string name = Console.ReadLine();
+
+        Console.Write("Enter your account number: ");
+        string accNum = Console.ReadLine();
+
+        Console.Write("Set your account PIN: ");
+        string pin = Console.ReadLine();
+
+        account.CreateAccount(name, accNum, pin);
+
+        while (true)
+        {
+            Console.WriteLine("\nChoose an option:");
+            Console.WriteLine("1. Deposit");
+            Console.WriteLine("2. Withdraw");
+            Console.WriteLine("3. Check Balance");
+            Console.WriteLine("4. Show Summary Array");
+            Console.WriteLine("5. Show Statement");
+            Console.WriteLine("6. Exit");
+
+            string choice = Console.ReadLine();
+
+            // Require PIN for all actions
+            if (choice != "6")
+            {
+                Console.Write("Enter your PIN: ");
+                string inputPin = Console.ReadLine();
+
+                if (!account.VerifyPin(inputPin))
+                {
+                    Console.WriteLine("Incorrect PIN. You have been logged out.");
+                    break;
+                }
+            }
+
+            if (choice == "1")
+            {
+                Console.Write("Enter amount to deposit: ");
+                decimal amount = Convert.ToDecimal(Console.ReadLine());
+                account.Deposit(amount);
+            }
+            else if (choice == "2")
+            {
+                Console.Write("Enter amount to withdraw: ");
+                decimal amount = Convert.ToDecimal(Console.ReadLine());
+                account.Withdraw(amount);
+            }
+            else if (choice == "3")
+            {
+                account.CheckBalance();
+            }
+            else if (choice == "4")
+            {
+                decimal[] summary = account.GetSummaryArray();
+                Console.WriteLine("Balance: " + summary[0]);
+                Console.WriteLine("Total Deposits: " + summary[1]);
+                Console.WriteLine("Total Withdrawals: " + summary[2]);
+            }
+            else if (choice == "5")
+            {
+                account.ShowStatement();
+            }
+            else if (choice == "6")
+            {
+                Console.WriteLine("Goodbye.");
+                break;
+            }
+            else
+            {
+                Console.WriteLine("Invalid option. Please try again.");
+            }
+        }
+    }
+}
